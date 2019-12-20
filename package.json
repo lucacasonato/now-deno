@@ -1,0 +1,41 @@
+{
+  "name": "now-deno",
+  "description": "Community based builder for using deno on the now/zeit platform",
+  "version": "0.0.1-alpha.7",
+  "license": "MIT",
+  "main": "./dist/index",
+  "homepage": "https://github.com/lucacasonato/now-deno",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucacasonato/now-deno.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "tsc",
+    "test": "tsc && jest",
+    "typecheck": "tsc --noEmit"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@now/build-utils": "^0.9.6",
+    "execa": "^1.0.0",
+    "fs-extra": "^7.0.1",
+    "now": "^16.4.4"
+  },
+  "devDependencies": {
+    "@types/execa": "^0.9.0",
+    "@types/fs-extra": "^7.0.0",
+    "jest": "^24.8.0",
+    "ms": "^2.1.2",
+    "node-fetch": "^2.6.0",
+    "prettier": "^1.18.2",
+    "typescript": "3.5.2"
+  },
+  "prettier": {
+    "useTabs": false,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  }
+}

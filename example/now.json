@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "now-deno@0.0.1-alpha.7"
+    }
+  }
+}
