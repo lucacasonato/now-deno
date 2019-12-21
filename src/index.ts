@@ -47,8 +47,9 @@ async function buildDenoLambda(
   const entrypointPath = downloadedFiles[entrypoint].fsPath;
   const entrypointDirname = path.dirname(entrypointPath);
 
-  const binName = path.basename(entrypointPath);
-  const binPath = path.join(workPath, binName);
+  const extname = path.extname(entrypointPath);
+  const binName = path.basename(entrypointPath).replace(extname, '');
+  const binPath = path.join(workPath, binName) + '.bundle.js';
 
   const { debug } = config;
   console.log('running `deno bundle`...');
@@ -65,25 +66,25 @@ async function buildDenoLambda(
       }
     );
   } catch (err) {
-    console.error('failed to `deno build`');
+    console.error('failed to `deno bundle`');
     throw err;
   }
 
-  const extname = path.extname(entrypointPath);
   const lambda = await createLambda({
     files: {
       ...extraFiles,
       ...layerFiles,
-      [binName]: new FileFsRef({
+      [binName + '.bundle.js']: new FileFsRef({
         mode: 0o755,
         fsPath: binPath,
       }),
     },
-    handler: binName.replace(extname, '.handler'),
+    handler: binName + '.handler',
     runtime: 'provided',
+    environment: {
+      HANDLER_EXT: 'bundle.js',
+    },
   });
-
-  console.log(lambda);
 
   if (version === 3) {
     return { output: lambda };
