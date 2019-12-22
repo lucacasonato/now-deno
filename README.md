@@ -40,6 +40,10 @@ That's the simplest way to use this runtime!
 
 You can place a `build.sh` function in the root of your deploy directory. This will be executed before the lambda is built.
 
+## `now dev`
+
+If you have have `deno` installed in your path then you can use `now dev` with this runtime. It should work just like any other runtime.
+
 ## Credits
 
 This was only possible due to the great work of [Andy Hayden](https://github.com/hayd) who made the first attempts at running [deno in a lambda function](https://github.com/hayd/deno-lambda).
