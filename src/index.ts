@@ -28,7 +28,7 @@ export async function build(opts: BuildOptions) {
 
   const lambdaFiles = await getDenoLambdaLayer(workPath);
   if (meta.isDev) {
-    debug('replacing amz-deno with local deno');
+    debug('symlinking local deno to replace amz-deno');
     await replaceAmzDeno(workPath);
   }
 
@@ -83,7 +83,9 @@ async function buildDenoLambda(
     );
   } catch (err) {
     debug('failed to `deno bundle`');
-    throw new Error('Failed to run `deno bundle`: ' + err.stderr);
+    throw new Error(
+      'Failed to run `deno bundle`: ' + err.stdout + ' ' + err.stderr
+    );
   }
 
   const lambda = await createLambda({
@@ -114,6 +116,7 @@ async function buildDenoLambda(
 async function getDenoLambdaLayer(workPath: string): Promise<Files> {
   const zipPath = path.join(workPath, 'deno-lambda-layer.zip');
   if (!(await pathExists(zipPath))) {
+    debug('downloading deno-lambda-layer.zip');
     try {
       await execa(
         'curl',
@@ -130,7 +133,10 @@ async function getDenoLambdaLayer(workPath: string): Promise<Files> {
     } catch (err) {
       debug('failed to download deno-lambda-layer');
       throw new Error(
-        'Failed to download deno-lambda-layer.zip: ' + err.stderr
+        'Failed to download deno-lambda-layer.zip: ' +
+          err.stdout +
+          ' ' +
+          err.stderr
       );
     }
   }
@@ -139,9 +145,8 @@ async function getDenoLambdaLayer(workPath: string): Promise<Files> {
   const bootstrapPath = path.join(layerDir, 'bootstrap');
   const amzDenoPath = path.join(layerDir, 'amz-deno');
 
-  if (
-    !((await pathExists(bootstrapPath)) || !(await pathExists(amzDenoPath)))
-  ) {
+  if (!(await pathExists(bootstrapPath)) || !(await pathExists(amzDenoPath))) {
+    debug('unzipping `deno-lambda-layer.zip` into `layer`');
     try {
       await execa('unzip', [zipPath, '-d', layerDir], {
         stdio: 'ignore',
@@ -149,7 +154,10 @@ async function getDenoLambdaLayer(workPath: string): Promise<Files> {
     } catch (err) {
       debug('failed to unzip `deno-lambda-layer.zip` into `layer`');
       throw new Error(
-        'Failed to unzip `deno-lambda-layer.zip` into `layer`: ' + err.stderr
+        'Failed to unzip `deno-lambda-layer.zip` into `layer`: ' +
+          err.stdout +
+          ' ' +
+          err.stderr
       );
     }
   }
