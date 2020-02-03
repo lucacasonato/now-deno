@@ -48,7 +48,7 @@ if (Deno.build.os != 'win') {
             return;
           }
         } catch (err) {}
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 3000));
       }
       proc.kill(1);
       throw Error('Failed to send request to now dev');
