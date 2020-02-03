@@ -13,7 +13,7 @@ If you're unfamiliar with now runtimes, please read the [runtime docs](https://z
 {
   "functions": {
     "api/**/*.{j,t}s": {
-      "runtime": "now-deno@0.2.0"
+      "runtime": "now-deno@0.3.0"
     }
   }
 }
