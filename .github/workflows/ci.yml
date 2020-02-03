@@ -39,6 +39,7 @@ jobs:
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   test:
+    needs: build
     strategy:
       matrix:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
