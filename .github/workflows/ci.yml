@@ -11,12 +11,12 @@ jobs:
         deno: ['0.31.0']
       fail-fast: false
     runs-on: ${{ matrix.os }}
-    name: now-dev-${{ matrix.os }}-node${{ matrix.node }}-deno${{ matrix.deno }}
+    name: now-dev-${{ matrix.os }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v1
       - name: Setup deno
-        uses: denolib/setup-deno@v1.2
+        uses: denolib/setup-deno@v1.2.0
         with:
           deno-version: ${{ matrix.deno }}
       - uses: actions/setup-node@v1
