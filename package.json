@@ -1,7 +1,7 @@
 {
   "name": "now-deno",
   "description": "Community based builder for using deno on the now/zeit platform",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "main": "./dist/index",
   "homepage": "https://github.com/lucacasonato/now-deno",

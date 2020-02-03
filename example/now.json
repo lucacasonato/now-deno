@@ -1,8 +1,8 @@
 {
   "functions": {
     "api/**/*.ts": {
-      "runtime": "now-deno@0.1.0",
-      "memory":  128
+      "runtime": "now-deno@0.2.0",
+      "memory": 128
     }
   }
 }
