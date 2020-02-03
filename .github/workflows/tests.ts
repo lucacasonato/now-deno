@@ -48,13 +48,13 @@ if (!isWin) {
             const text = await req.text();
             assertStrContains(text, 'Welcome to deno');
             assertStrContains(text, '🦕');
-            proc.kill(1);
+            proc.kill(2);
             return;
           }
         } catch (err) {}
         await new Promise(resolve => setTimeout(resolve, 3000));
       }
-      proc.kill(1);
+      proc.kill(2);
       throw Error('Failed to send request to now dev');
     },
   });
