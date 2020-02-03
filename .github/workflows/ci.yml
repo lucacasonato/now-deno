@@ -61,6 +61,8 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
         run: yarn install
+      - name: Update package version and tag
+        run: deno --allow-env --allow-read --allow-write .github/workflows/update-version.ts
       - name: Run tests
         run: deno test --allow-env --allow-write --allow-net --allow-run .github/workflows/tests.ts
         env:
