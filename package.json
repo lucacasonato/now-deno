@@ -1,5 +1,5 @@
 {
-  "name": "@luca-rand/now-deno",
+  "name": "now-deno",
   "description": "Community builder for using deno on the ZEIT Now platform",
   "version": "0.3.0",
   "license": "MIT",
