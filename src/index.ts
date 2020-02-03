@@ -20,6 +20,14 @@ import {
 } from './dev';
 import { getWorkPath } from './util';
 
+const DENO_LATEST = 'latest'
+const DENO_VERSION = process.env.DENO_VERSION || DENO_LATEST;
+const DOWNLOAD_URL = DENO_VERSION === DENO_LATEST ?
+      `https://github.com/hayd/deno-lambda/releases/latest/download/deno-lambda-layer.zip` :
+      `https://github.com/hayd/deno-lambda/releases/download/${DENO_VERSION}/deno-lambda-layer.zip`;
+
+debug('Deno Version:', DENO_VERSION)
+
 export const version = 3;
 
 export async function build(opts: BuildOptions) {
@@ -160,7 +168,7 @@ async function getDenoLambdaLayer(
 ): Promise<Files> {
   const zipPath = path.join(workPath, 'deno-lambda-layer.zip');
   if (!(await pathExists(zipPath))) {
-    debug('downloading deno-lambda-layer.zip');
+    debug('downloading ', DOWNLOAD_URL);
     try {
       await execa(
         'curl',
@@ -168,7 +176,7 @@ async function getDenoLambdaLayer(
           '-o',
           zipPath,
           '-L',
-          'https://github.com/hayd/deno-lambda/releases/latest/download/deno-lambda-layer.zip',
+          DOWNLOAD_URL,
         ],
         {
           stdio: 'pipe',
