@@ -5,11 +5,14 @@ import {
 } from 'https://deno.land/std/testing/mod.ts';
 import { join } from 'https://deno.land/std/path/mod.ts';
 
+const isWin = Deno.build.os == "win";
+const runNow = isWin ? ["now.cmd"] :[ "npx", "now"]
+
 test({
   name: 'deploy to now',
   async fn() {
     const proc = Deno.run({
-      args: ['npx', 'now', '-t', Deno.env()['NOW_TOKEN']],
+      args: runNow.concat('-t', Deno.env()['NOW_TOKEN']),
       cwd: join(Deno.cwd(), 'example'),
       stdout: 'piped',
       stderr: 'piped',
@@ -28,12 +31,12 @@ test({
   },
 });
 
-if (Deno.build.os != 'win') {
+if (!isWin) {
   test({
     name: 'run on now dev',
     async fn() {
       const proc = Deno.run({
-        args: ['npx', 'now', 'dev'],
+        args: runNow.concat('dev'),
         cwd: join(Deno.cwd(), 'example'),
         stdout: 'inherit',
         stderr: 'inherit',
