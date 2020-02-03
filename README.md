@@ -1,6 +1,6 @@
 # now-deno
 
-> ZEIT Now Deno builder - run Deno on Zeit. 🦕 + λ = ❤
+> ZEIT Now Deno builder - run Deno on Zeit. 🦕 + λ = ❤️
 
 This builder allows you to run [Deno](https://deno.land) as a lambda on ZEIT Now.
 
