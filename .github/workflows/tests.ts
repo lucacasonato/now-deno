@@ -5,8 +5,8 @@ import {
 } from 'https://deno.land/std/testing/mod.ts';
 import { join } from 'https://deno.land/std/path/mod.ts';
 
-const isWin = Deno.build.os == "win";
-const runNow = isWin ? ["now.cmd"] :[ "npx", "now"]
+const isWin = Deno.build.os == 'win';
+const runNow = isWin ? ['now.cmd'] : ['npx', 'now'];
 
 test({
   name: 'deploy to now',
@@ -48,6 +48,7 @@ if (!isWin) {
             const text = await req.text();
             assertStrContains(text, 'Welcome to deno');
             assertStrContains(text, '🦕');
+            proc.kill(1);
             return;
           }
         } catch (err) {}
