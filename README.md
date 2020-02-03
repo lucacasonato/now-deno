@@ -42,7 +42,7 @@ You can place a `build.sh` function in the root of your deploy directory. This w
 
 ## `now dev`
 
-> `now dev` is currently only supported on macOS and Linux. It is not supported on Windows.
+> **`now dev` is currently only supported on macOS and Linux. It is not supported on Windows.**
 
 If you have have `deno` installed in your path then you can use `now dev` with this runtime. It should work just like any other runtime.
 
