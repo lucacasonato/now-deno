@@ -31,6 +31,30 @@ test({
   },
 });
 
+test({
+  name: 'deploy to now with specific version',
+  async fn() {
+    const proc = Deno.run({
+      args: runNow.concat('-t', Deno.env()['NOW_TOKEN'], '--build-env', '[DENO_VERSION=0.31.0]'),
+      cwd: join(Deno.cwd(), 'example'),
+      stdout: 'piped',
+      stderr: 'piped',
+    });
+    const status = await proc.status();
+    const decoder = new TextDecoder();
+    assert(status.success, decoder.decode(await proc.stderrOutput()));
+    const url = decoder.decode(await proc.output());
+    console.log(`Deployed to ${url}`);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    const req = await fetch(`${url}/api/version`);
+    assert(req.ok);
+    const text = await req.text();
+    assertStrContains(text, 'Welcome to deno');
+    assertStrContains(text, '0.31.0');
+    assertStrContains(text, '🦕');
+  },
+});
+
 if (!isWin) {
   test({
     name: 'run on now dev',
