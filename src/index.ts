@@ -87,6 +87,7 @@ async function buildDenoLambda(
     runtime: 'provided',
     environment: {
       HANDLER_EXT: 'bundle.js',
+      PATH: process.env.PATH + ':./bin',
     },
   });
 
