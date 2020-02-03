@@ -1,9 +1,9 @@
-name: now-deploy
+name: ci
 
 on: push
 
 jobs:
-  now-dev:
+  npm-deploy:
     strategy:
       matrix:
         os: ['windows-latest', 'macos-latest', 'ubuntu-latest']
