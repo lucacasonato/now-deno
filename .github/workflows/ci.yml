@@ -2,13 +2,48 @@ name: ci
 
 on: push
 
+env:
+  PACKAGE_NAME: '@now-deno/ci'
+
 jobs:
+  build:
+    strategy:
+      matrix:
+        os: ['ubuntu-latest']
+        node: ['12.x']
+        deno: ['0.31.0']
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    name: build-${{ matrix.os }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v1
+      - name: Setup deno
+        uses: denolib/setup-deno@v1.2.0
+        with:
+          deno-version: ${{ matrix.deno }}
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install dependencies
+        run: yarn install
+      - name: Build
+        run: yarn build
+      - name: Update package version and tag
+        run: deno --allow-env --allow-read --allow-write .github/workflows/update-version.ts
+      - name: Publish to npm
+        run: |
+          mv .github/workflows/.npmrc .
+          npm publish --access public
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
   test:
     strategy:
       matrix:
-        os: ["macos-latest", "ubuntu-latest"]
-        node: ["12.x"]
-        deno: ["0.31.0"]
+        os: ['ubuntu-latest', 'macos-latest']
+        node: ['12.x']
+        deno: ['0.31.0']
       fail-fast: false
     runs-on: ${{ matrix.os }}
     name: test-${{ matrix.os }}
@@ -19,25 +54,13 @@ jobs:
         uses: denolib/setup-deno@v1.2.0
         with:
           deno-version: ${{ matrix.deno }}
-      - uses: actions/setup-node@v1
+      - name: Setup node
+        uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
-      - run: yarn install
-      - run: yarn build
-      - name: Update package version and tag
-        run: deno --allow-env --allow-read --allow-write .github/workflows/update-version.ts
-        if: matrix.os == 'ubuntu-latest'
-        env:
-          PACKAGE_NAME: "@now-deno/ci"
-      - name: npm publish
-        run: |
-          mv .github/workflows/.npmrc .
-          npm publish --access public
-        if: matrix.os == 'ubuntu-latest'
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Install dependencies
+        run: yarn install
       - name: Run tests
         run: deno test --allow-env --allow-write --allow-net --allow-run .github/workflows/tests.ts
-        if: matrix.os == 'ubuntu-latest'
         env:
           NOW_TOKEN: ${{ secrets.NOW_TOKEN }}

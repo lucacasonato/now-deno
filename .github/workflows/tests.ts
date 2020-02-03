@@ -4,6 +4,7 @@ import {
   assertStrContains,
 } from 'https://deno.land/std/testing/mod.ts';
 import { join } from 'https://deno.land/std/path/mod.ts';
+import './update-version.ts';
 
 if (Deno.build.os == 'linux') {
   test({
