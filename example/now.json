@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/**/*.ts": {
-      "runtime": "now-deno@0.2.0",
+      "runtime": "https://github.com/lucacasonato/now-deno.git#now-dev",
       "memory": 128
     }
   }
