@@ -50,6 +50,7 @@ async function buildDenoLambda(
   const extname = path.extname(entrypointPath);
   const binName = path.basename(entrypointPath).replace(extname, '');
   const binPath = path.join(workPath, binName) + '.bundle.js';
+  const denoDir = path.join(workPath, 'layer', '.deno_dir');
 
   const { debug } = config;
   console.log('running `deno bundle`...');
@@ -59,7 +60,7 @@ async function buildDenoLambda(
       ['bundle', entrypointPath, binPath].concat(debug ? ['-L debug'] : []),
       {
         env: {
-          DENO_DIR: path.join(workPath, 'layer', '.deno_dir'),
+          DENO_DIR: denoDir,
         },
         cwd: entrypointDirname,
         stdio: 'inherit',
@@ -70,13 +71,13 @@ async function buildDenoLambda(
     throw err;
   }
 
+  const denoDirFiles = await getDenoDirFiles(denoDir);
+
   const lambda = await createLambda({
     files: {
       ...extraFiles,
       ...layerFiles,
-      '.deno_dir': new FileFsRef({
-        fsPath: path.join(workPath, 'layer', '.deno_dir'),
-      }),
+      ...denoDirFiles,
       [binName + '.bundle.js']: new FileFsRef({
         mode: 0o755,
         fsPath: binPath,
@@ -96,6 +97,34 @@ async function buildDenoLambda(
   return {
     [entrypoint]: lambda,
   };
+}
+
+async function walk(dir: string): Promise<string[]> {
+  const f = await fs.readdir(dir);
+  const files = await Promise.all(
+    f.map(async file => {
+      const filePath = path.join(dir, file);
+      const stats = await fs.stat(filePath);
+      if (stats.isDirectory()) return walk(filePath);
+      else if (stats.isFile()) return filePath;
+      throw 'File not dir or file: ' + filePath;
+    })
+  );
+
+  return files.flat();
+}
+
+async function getDenoDirFiles(denoDirPath: string): Promise<Files> {
+  const files: Files = {};
+
+  const dir = await walk(denoDirPath);
+
+  dir.forEach(file => {
+    const f = path.join('.deno_dir', file.replace(denoDirPath + '/', ''));
+    files[f] = new FileFsRef({ fsPath: file, mode: 0o755 });
+  });
+
+  return files;
 }
 
 async function getDenoLambdaLayer({ workPath }: BuildOptions): Promise<Files> {
