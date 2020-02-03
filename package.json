@@ -1,7 +1,7 @@
 {
   "name": "@luca-rand/now-deno",
   "description": "Community builder for using deno on the ZEIT Now platform",
-  "version": "0.3.0-dev.2",
+  "version": "0.3.0",
   "license": "MIT",
   "main": "./dist/index",
   "homepage": "https://github.com/lucacasonato/now-deno",
