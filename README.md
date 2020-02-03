@@ -12,7 +12,7 @@ If you're unfamiliar with now runtimes, please read the [runtime docs](https://z
 // now.json
 {
   "functions": {
-    "api/**/*.ts": {
+    "api/**/*.{j,t}s": {
       "runtime": "now-deno@0.2.0"
     }
   }
