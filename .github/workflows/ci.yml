@@ -61,6 +61,9 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
         run: yarn install
+      - name: Install now
+        run: npm i -g now
+        if: matrix.os == 'windows-latest'
       - name: Update package version and tag
         run: deno --allow-env --allow-read --allow-write .github/workflows/update-version.ts
       - name: Run tests
