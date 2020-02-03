@@ -7,7 +7,7 @@ import { join } from 'https://deno.land/std/path/mod.ts';
 
 test(async function deployNow() {
   const proc = Deno.run({
-    args: ['now', '-t', Deno.env()['NOW_TOKEN']],
+    args: ['npx', 'now', '-t', Deno.env()['NOW_TOKEN']],
     cwd: join(Deno.cwd(), 'example'),
     stdout: 'piped',
     stderr: 'piped',

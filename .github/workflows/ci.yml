@@ -22,8 +22,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
-      - name: Install now
-        run: npm add --global now
       - run: yarn install
       - run: yarn build
       - name: Update package version and tag
@@ -38,7 +36,8 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: deno test --allow-env --allow-write --allow-net --allow-run .github/workflows/tests.ts
+      - name: Run tests
+        run: deno test --allow-env --allow-write --allow-net --allow-run .github/workflows/tests.ts
         if: matrix.os == 'ubuntu-latest'
         env:
           NOW_TOKEN: ${{ secrets.NOW_TOKEN }}
