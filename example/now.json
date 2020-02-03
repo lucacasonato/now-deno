@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/**/*.ts": {
-      "runtime": "@now-deno/ci@0.1.0-f38981601d90429a662c7f7e185cc752f95c2a15",
+      "runtime": "now-deno@0.3.0",
       "memory": 128
     }
   }
