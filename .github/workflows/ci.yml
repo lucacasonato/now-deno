@@ -3,15 +3,15 @@ name: ci
 on: push
 
 jobs:
-  npm-deploy:
+  test:
     strategy:
       matrix:
-        os: ['windows-latest', 'macos-latest', 'ubuntu-latest']
-        node: ['12.x']
-        deno: ['0.31.0']
+        os: ["macos-latest", "ubuntu-latest"]
+        node: ["12.x"]
+        deno: ["0.31.0"]
       fail-fast: false
     runs-on: ${{ matrix.os }}
-    name: now-dev-${{ matrix.os }}
+    name: test-${{ matrix.os }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v1
@@ -24,3 +24,20 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: yarn install
       - run: yarn build
+      - name: Update package version and tag
+        run: deno --allow-env --allow-read --allow-write .github/workflows/update-version.ts
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          PACKAGE_NAME: "@now-deno/ci"
+      - name: npm publish
+        run: |
+          mv .github/workflows/.npmrc .
+          npm publish --access public
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Run tests
+        run: deno test --allow-env --allow-write --allow-net --allow-run .github/workflows/tests.ts
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          NOW_TOKEN: ${{ secrets.NOW_TOKEN }}
