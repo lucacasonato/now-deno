@@ -1,7 +1,7 @@
 {
-  "name": "now-deno",
-  "description": "Community based builder for using deno on the now/zeit platform",
-  "version": "0.2.0",
+  "name": "@luca-rand/now-deno",
+  "description": "Community builder for using deno on the ZEIT Now platform",
+  "version": "0.3.0",
   "license": "MIT",
   "main": "./dist/index",
   "homepage": "https://github.com/lucacasonato/now-deno",
@@ -10,6 +10,7 @@
     "url": "https://github.com/lucacasonato/now-deno.git"
   },
   "scripts": {
+    "dev": "tsc --watch",
     "build": "tsc",
     "prepublishOnly": "tsc",
     "test": "tsc && jest",
@@ -20,9 +21,13 @@
   ],
   "dependencies": {
     "@now/build-utils": "^0.9.6",
+    "@types/command-exists": "^1.2.0",
+    "@types/which": "^1.3.2",
+    "command-exists": "^1.2.8",
     "execa": "^1.0.0",
     "fs-extra": "^7.0.1",
-    "now": "^16.4.4"
+    "now": "^16.4.4",
+    "which": "^2.0.2"
   },
   "devDependencies": {
     "@types/execa": "^0.9.0",

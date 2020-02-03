@@ -1,0 +1,26 @@
+name: ci
+
+on: push
+
+jobs:
+  npm-deploy:
+    strategy:
+      matrix:
+        os: ['windows-latest', 'macos-latest', 'ubuntu-latest']
+        node: ['12.x']
+        deno: ['0.31.0']
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    name: now-dev-${{ matrix.os }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v1
+      - name: Setup deno
+        uses: denolib/setup-deno@v1.2.0
+        with:
+          deno-version: ${{ matrix.deno }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - run: yarn install
+      - run: yarn build

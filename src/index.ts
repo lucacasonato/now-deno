@@ -1,4 +1,4 @@
-import fs from 'fs-extra';
+import fs, { pathExists } from 'fs-extra';
 import path from 'path';
 import execa from 'execa';
 import {
@@ -10,20 +10,36 @@ import {
   BuildOptions,
   DownloadedFiles,
   Files,
+  debug,
 } from '@now/build-utils';
+import {
+  ensureDeno,
+  replaceBinDeno,
+  ensureBash,
+  replaceBootstrapBash,
+} from './dev';
+import { getWorkPath } from './util';
 
-export const version = process.env.RUNTIME_NAME ? 3 : 1;
+export const version = 3;
 
 export async function build(opts: BuildOptions) {
-  if (version !== 3) {
-    console.error('now-deno only supports v3 ZEIT Now builders');
-    throw Error();
+  const { files, entrypoint, workPath: wp, config, meta = {} } = opts;
+  const workPath = getWorkPath(wp, entrypoint);
+  await fs.mkdirp(workPath);
+  if (meta.isDev) {
+    debug('checking that deno is available');
+    ensureDeno();
+    debug('checking that bash is available');
+    ensureBash();
   }
 
-  const lambdaFiles = await getDenoLambdaLayer(opts);
+  const lambdaFiles = await getDenoLambdaLayer(workPath, meta.isDev || false);
+  if (meta.isDev) {
+    debug('symlinking local deno to replace deno-lambda-layer bin/deno');
+    await replaceBinDeno(workPath);
+  }
 
-  const { files, entrypoint, workPath, config, meta = {} } = opts;
-  console.log('downloading files');
+  debug('downloading source files');
   const downloadedFiles = await download(
     files,
     path.join(workPath, 'src'),
@@ -34,16 +50,23 @@ export async function build(opts: BuildOptions) {
   await runUserScripts(entryPath);
   const extraFiles = await gatherExtraFiles(config.includeFiles, entryPath);
 
-  return buildDenoLambda(opts, downloadedFiles, extraFiles, lambdaFiles);
+  return buildDenoLambda(
+    opts,
+    downloadedFiles,
+    extraFiles,
+    lambdaFiles,
+    workPath
+  );
 }
 
 async function buildDenoLambda(
-  { workPath, entrypoint, config }: BuildOptions,
+  { entrypoint }: BuildOptions,
   downloadedFiles: DownloadedFiles,
   extraFiles: DownloadedFiles,
-  layerFiles: Files
+  layerFiles: Files,
+  workPath: string
 ) {
-  console.log('building single file');
+  debug('building single file');
   const entrypointPath = downloadedFiles[entrypoint].fsPath;
   const entrypointDirname = path.dirname(entrypointPath);
 
@@ -52,23 +75,24 @@ async function buildDenoLambda(
   const binPath = path.join(workPath, binName) + '.bundle.js';
   const denoDir = path.join(workPath, 'layer', '.deno_dir');
 
-  const { debug } = config;
-  console.log('running `deno bundle`...');
+  debug('running `deno bundle`...');
   try {
     await execa(
       path.join(workPath, 'layer', 'bin', 'deno'),
-      ['bundle', entrypointPath, binPath].concat(debug ? ['-L debug'] : []),
+      ['bundle', entrypointPath, binPath].concat(debug ? ['-L=debug'] : []),
       {
         env: {
           DENO_DIR: denoDir,
         },
         cwd: entrypointDirname,
-        stdio: 'inherit',
+        stdio: 'pipe',
       }
     );
   } catch (err) {
-    console.error('failed to `deno bundle`:' + err);
-    throw err;
+    debug('failed to `deno bundle`');
+    throw new Error(
+      'Failed to run `deno bundle`: ' + err.stdout + ' ' + err.stderr
+    );
   }
 
   const denoDirFiles = await getDenoDirFiles(denoDir);
@@ -128,44 +152,70 @@ async function getDenoDirFiles(denoDirPath: string): Promise<Files> {
   return files;
 }
 
-async function getDenoLambdaLayer({ workPath }: BuildOptions): Promise<Files> {
+async function getDenoLambdaLayer(
+  workPath: string,
+  isDev: boolean
+): Promise<Files> {
   const zipPath = path.join(workPath, 'deno-lambda-layer.zip');
-  try {
-    await execa(
-      'curl',
-      [
-        '-o',
-        zipPath,
-        '-L',
-        'https://github.com/hayd/deno-lambda/releases/latest/download/deno-lambda-layer.zip',
-      ],
-      {
-        stdio: 'inherit',
-      }
-    );
-  } catch (err) {
-    console.error('failed to download `deno-lambda-layer.zip`');
-    throw err;
+  if (!(await pathExists(zipPath))) {
+    debug('downloading deno-lambda-layer.zip');
+    try {
+      await execa(
+        'curl',
+        [
+          '-o',
+          zipPath,
+          '-L',
+          'https://github.com/hayd/deno-lambda/releases/latest/download/deno-lambda-layer.zip',
+        ],
+        {
+          stdio: 'pipe',
+        }
+      );
+    } catch (err) {
+      debug('failed to download deno-lambda-layer');
+      throw new Error(
+        'Failed to download deno-lambda-layer.zip: ' +
+          err.stdout +
+          ' ' +
+          err.stderr
+      );
+    }
   }
 
   const layerDir = path.join(workPath, 'layer');
-  try {
-    await execa('unzip', [zipPath, '-d', layerDir], {
-      stdio: 'inherit',
-    });
-  } catch (err) {
-    console.error('failed to unzip `deno-lambda-layer.zip` into `layer`');
-    throw err;
+  const bootstrapPath = path.join(layerDir, 'bootstrap');
+  const denoPath = path.join(layerDir, 'bin/deno');
+
+  if (!(await pathExists(bootstrapPath)) || !(await pathExists(denoPath))) {
+    debug('unzipping `deno-lambda-layer.zip` into `layer`');
+    try {
+      await execa('unzip', [zipPath, '-d', layerDir], {
+        stdio: 'ignore',
+      });
+    } catch (err) {
+      debug('failed to unzip `deno-lambda-layer.zip` into `layer`');
+      throw new Error(
+        'Failed to unzip `deno-lambda-layer.zip` into `layer`: ' +
+          err.stdout +
+          ' ' +
+          err.stderr
+      );
+    }
   }
 
+  if (isDev) {
+    debug('using bash for bootstrap script');
+    await replaceBootstrapBash(bootstrapPath);
+  }
   return {
     bootstrap: new FileFsRef({
       mode: 0o755,
-      fsPath: path.join(layerDir, 'bootstrap'),
+      fsPath: bootstrapPath,
     }),
     'bin/deno': new FileFsRef({
       mode: 0o755,
-      fsPath: path.join(layerDir, 'bin/deno'),
+      fsPath: denoPath,
     }),
   };
 }
