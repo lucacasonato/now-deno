@@ -55,7 +55,7 @@ async function buildDenoLambda(
   console.log('running `deno bundle`...');
   try {
     await execa(
-      path.join(workPath, 'layer', 'amz-deno'),
+      path.join(workPath, 'layer', 'bin', 'deno'),
       ['bundle', entrypointPath, binPath].concat(debug ? ['-L debug'] : []),
       {
         env: {
@@ -66,7 +66,7 @@ async function buildDenoLambda(
       }
     );
   } catch (err) {
-    console.error('failed to `deno bundle`');
+    console.error('failed to `deno bundle`:' + err);
     throw err;
   }
 
@@ -74,6 +74,9 @@ async function buildDenoLambda(
     files: {
       ...extraFiles,
       ...layerFiles,
+      '.deno_dir': new FileFsRef({
+        fsPath: path.join(workPath, 'layer', '.deno_dir'),
+      }),
       [binName + '.bundle.js']: new FileFsRef({
         mode: 0o755,
         fsPath: binPath,
@@ -130,9 +133,9 @@ async function getDenoLambdaLayer({ workPath }: BuildOptions): Promise<Files> {
       mode: 0o755,
       fsPath: path.join(layerDir, 'bootstrap'),
     }),
-    'amz-deno': new FileFsRef({
+    'bin/deno': new FileFsRef({
       mode: 0o755,
-      fsPath: path.join(layerDir, 'amz-deno'),
+      fsPath: path.join(layerDir, 'bin/deno'),
     }),
   };
 }
