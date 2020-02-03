@@ -12,7 +12,12 @@ import {
   Files,
   debug,
 } from '@now/build-utils';
-import { ensureDeno, replaceAmzDeno } from './dev';
+import {
+  ensureDeno,
+  replaceBinDeno,
+  ensureBash,
+  replaceBootstrapBash,
+} from './dev';
 import { getWorkPath } from './util';
 
 export const version = 3;
@@ -24,12 +29,14 @@ export async function build(opts: BuildOptions) {
   if (meta.isDev) {
     debug('checking that deno is available');
     ensureDeno();
+    debug('checking that bash is available');
+    ensureBash();
   }
 
-  const lambdaFiles = await getDenoLambdaLayer(workPath);
+  const lambdaFiles = await getDenoLambdaLayer(workPath, meta.isDev || false);
   if (meta.isDev) {
-    debug('symlinking local deno to replace amz-deno');
-    await replaceAmzDeno(workPath);
+    debug('symlinking local deno to replace deno-lambda-layer bin/deno');
+    await replaceBinDeno(workPath);
   }
 
   debug('downloading source files');
@@ -53,7 +60,7 @@ export async function build(opts: BuildOptions) {
 }
 
 async function buildDenoLambda(
-  { entrypoint, config }: BuildOptions,
+  { entrypoint }: BuildOptions,
   downloadedFiles: DownloadedFiles,
   extraFiles: DownloadedFiles,
   layerFiles: Files,
@@ -66,16 +73,16 @@ async function buildDenoLambda(
   const extname = path.extname(entrypointPath);
   const binName = path.basename(entrypointPath).replace(extname, '');
   const binPath = path.join(workPath, binName) + '.bundle.js';
+  const denoDir = path.join(workPath, 'layer', '.deno_dir');
 
-  const { debug: isDebug } = config;
   debug('running `deno bundle`...');
   try {
     await execa(
-      path.join(workPath, 'layer', 'amz-deno'),
-      ['bundle', entrypointPath, binPath].concat(isDebug ? ['-L debug'] : []),
+      path.join(workPath, 'layer', 'bin', 'deno'),
+      ['bundle', entrypointPath, binPath].concat(debug ? ['-L=debug'] : []),
       {
         env: {
-          DENO_DIR: path.join(workPath, 'layer', '.deno_dir'),
+          DENO_DIR: denoDir,
         },
         cwd: entrypointDirname,
         stdio: 'pipe',
@@ -88,10 +95,13 @@ async function buildDenoLambda(
     );
   }
 
+  const denoDirFiles = await getDenoDirFiles(denoDir);
+
   const lambda = await createLambda({
     files: {
       ...extraFiles,
       ...layerFiles,
+      ...denoDirFiles,
       [binName + '.bundle.js']: new FileFsRef({
         mode: 0o755,
         fsPath: binPath,
@@ -101,6 +111,7 @@ async function buildDenoLambda(
     runtime: 'provided',
     environment: {
       HANDLER_EXT: 'bundle.js',
+      PATH: process.env.PATH + ':./bin',
     },
   });
 
@@ -113,7 +124,38 @@ async function buildDenoLambda(
   };
 }
 
-async function getDenoLambdaLayer(workPath: string): Promise<Files> {
+async function walk(dir: string): Promise<string[]> {
+  const f = await fs.readdir(dir);
+  const files = await Promise.all(
+    f.map(async file => {
+      const filePath = path.join(dir, file);
+      const stats = await fs.stat(filePath);
+      if (stats.isDirectory()) return walk(filePath);
+      else if (stats.isFile()) return filePath;
+      throw 'File not dir or file: ' + filePath;
+    })
+  );
+
+  return files.flat();
+}
+
+async function getDenoDirFiles(denoDirPath: string): Promise<Files> {
+  const files: Files = {};
+
+  const dir = await walk(denoDirPath);
+
+  dir.forEach(file => {
+    const f = path.join('.deno_dir', file.replace(denoDirPath + '/', ''));
+    files[f] = new FileFsRef({ fsPath: file, mode: 0o755 });
+  });
+
+  return files;
+}
+
+async function getDenoLambdaLayer(
+  workPath: string,
+  isDev: boolean
+): Promise<Files> {
   const zipPath = path.join(workPath, 'deno-lambda-layer.zip');
   if (!(await pathExists(zipPath))) {
     debug('downloading deno-lambda-layer.zip');
@@ -143,9 +185,9 @@ async function getDenoLambdaLayer(workPath: string): Promise<Files> {
 
   const layerDir = path.join(workPath, 'layer');
   const bootstrapPath = path.join(layerDir, 'bootstrap');
-  const amzDenoPath = path.join(layerDir, 'amz-deno');
+  const denoPath = path.join(layerDir, 'bin/deno');
 
-  if (!(await pathExists(bootstrapPath)) || !(await pathExists(amzDenoPath))) {
+  if (!(await pathExists(bootstrapPath)) || !(await pathExists(denoPath))) {
     debug('unzipping `deno-lambda-layer.zip` into `layer`');
     try {
       await execa('unzip', [zipPath, '-d', layerDir], {
@@ -162,14 +204,18 @@ async function getDenoLambdaLayer(workPath: string): Promise<Files> {
     }
   }
 
+  if (isDev) {
+    debug('using bash for bootstrap script');
+    await replaceBootstrapBash(bootstrapPath);
+  }
   return {
     bootstrap: new FileFsRef({
       mode: 0o755,
       fsPath: bootstrapPath,
     }),
-    'amz-deno': new FileFsRef({
+    'bin/deno': new FileFsRef({
       mode: 0o755,
-      fsPath: amzDenoPath,
+      fsPath: denoPath,
     }),
   };
 }

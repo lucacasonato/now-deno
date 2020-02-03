@@ -8,7 +8,7 @@ jobs:
       matrix:
         os: ['windows-latest', 'macos-latest', 'ubuntu-latest']
         node: ['12.x']
-        deno: ['0.27.0']
+        deno: ['0.31.0']
       fail-fast: false
     runs-on: ${{ matrix.os }}
     name: now-dev-${{ matrix.os }}-node${{ matrix.node }}-deno${{ matrix.deno }}

@@ -1,6 +1,12 @@
-import { Context, Event } from 'https://deno.land/x/lambda/mod.ts';
+import {
+  APIGatewayEventRequestContext,
+  APIGatewayEvent,
+} from 'https://deno.land/x/lambda/mod.ts';
 
-export async function handler(event: Event, context: Context) {
+export async function handler(
+  event: APIGatewayEvent,
+  context: APIGatewayEventRequestContext
+) {
   return {
     statusCode: 200,
     body: `Welcome to deno ${Deno.version.deno} 🦕`,
