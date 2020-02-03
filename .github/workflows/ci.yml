@@ -29,7 +29,10 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         env:
           PACKAGE_NAME: '@now-deno/ci'
-      - run: npm publish
+      - name: npm publish
+        run: |
+          mv .github/workflows/.npmrc .
+          npm publish
         if: matrix.os == 'ubuntu-latest'
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
