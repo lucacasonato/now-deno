@@ -36,7 +36,7 @@ if (!isWin) {
     name: 'run on now dev',
     async fn() {
       const proc = Deno.run({
-        args: runNow.concat('dev', '-c', '-t', Deno.env()['NOW_TOKEN']),
+        args: runNow.concat('dev'),
         cwd: join(Deno.cwd(), 'example'),
         stdout: 'inherit',
         stderr: 'inherit',
