@@ -1,11 +1,11 @@
 import {
-  APIGatewayEventRequestContext,
-  APIGatewayEvent,
+  APIGatewayProxyEvent,
+  Context
 } from 'https://deno.land/x/lambda/mod.ts';
 
 export async function handler(
-  event: APIGatewayEvent,
-  context: APIGatewayEventRequestContext
+  event: APIGatewayProxyEvent,
+  context: Context
 ) {
   return {
     statusCode: 200,

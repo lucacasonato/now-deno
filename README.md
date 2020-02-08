@@ -21,9 +21,12 @@ If you're unfamiliar with now runtimes, please read the [runtime docs](https://z
 
 ```ts
 // api/hello.ts
-import { APIGatewayEventRequestContext, APIGatewayEvent } from 'https://deno.land/x/lambda/mod.ts';
+import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'https://deno.land/x/lambda/mod.ts';
 
-export async function handler(event: APIGatewayEvent, context: APIGatewayEventRequestContext) {
+export async function handler(
+  event: APIGatewayProxyEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> {
   return {
     statusCode: 200,
     body: `Welcome to deno ${Deno.version.deno} 🦕`,
