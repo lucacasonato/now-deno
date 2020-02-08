@@ -12,7 +12,7 @@ test({
   name: 'deploy to now',
   async fn() {
     const proc = Deno.run({
-      args: runNow.concat('-t', Deno.env()['NOW_TOKEN']),
+      args: runNow.concat('-c', '-t', Deno.env()['NOW_TOKEN']),
       cwd: join(Deno.cwd(), 'example'),
       stdout: 'piped',
       stderr: 'piped',
@@ -36,7 +36,7 @@ if (!isWin) {
     name: 'run on now dev',
     async fn() {
       const proc = Deno.run({
-        args: runNow.concat('dev'),
+        args: runNow.concat('-c', 'dev'),
         cwd: join(Deno.cwd(), 'example'),
         stdout: 'inherit',
         stderr: 'inherit',
