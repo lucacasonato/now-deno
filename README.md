@@ -19,6 +19,8 @@ If you're unfamiliar with now runtimes, please read the [runtime docs](https://z
 }
 ```
 
+Note: You need Now v17.x or above to use the above configuration.
+
 ```ts
 // api/hello.ts
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'https://deno.land/x/lambda/mod.ts';
