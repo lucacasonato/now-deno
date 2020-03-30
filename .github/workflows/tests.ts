@@ -1,8 +1,8 @@
 import {
   assert,
   assertStrContains,
-} from 'https://deno.land/std/testing/mod.ts';
-import { join } from 'https://deno.land/std/path/mod.ts';
+} from 'https://deno.land/std@0.38.0/testing/mod.ts';
+import { join } from 'https://deno.land/std@0.38.0/path/mod.ts';
 
 const isWin = Deno.build.os == 'win';
 const runNow = isWin ? ['now.cmd'] : ['npx', 'now'];

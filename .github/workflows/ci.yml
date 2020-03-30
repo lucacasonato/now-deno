@@ -11,7 +11,7 @@ jobs:
       matrix:
         os: ['ubuntu-latest']
         node: ['12.x']
-        deno: ['0.32.0']
+        deno: ['0.38.0']
       fail-fast: false
     runs-on: ${{ matrix.os }}
     name: build-${{ matrix.os }}
