@@ -20,6 +20,7 @@ Deno.test({
     const decoder = new TextDecoder();
     assert(status.success, decoder.decode(await proc.stderrOutput()));
     const url = decoder.decode(await proc.output());
+    proc.close();
     console.log(`Deployed to ${url}`);
     await new Promise(resolve => setTimeout(resolve, 1000));
     const req = await fetch(`${url}/api/version`);
@@ -48,6 +49,7 @@ if (!isWin) {
             assertStrContains(text, 'Welcome to deno');
             assertStrContains(text, '🦕');
             proc.kill(2);
+            proc.close();
             return;
           }
         } catch (err) {}
