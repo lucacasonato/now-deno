@@ -51,7 +51,7 @@ if (!isWin) {
             assertStrContains(text, '🦕');
             proc.kill(2);
             proc.close();
-            return;
+            Deno.exit(0);
           }
         } catch (err) {
           console.log(err);
