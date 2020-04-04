@@ -38,7 +38,6 @@ if (!isWin) {
       const proc = Deno.run({
         cmd: runNow.concat('dev', '-t', Deno.env()['NOW_TOKEN']),
         cwd: join(Deno.cwd(), 'example'),
-        stdin: 'piped',
         stdout: 'inherit',
         stderr: 'inherit',
       });
@@ -54,7 +53,9 @@ if (!isWin) {
             proc.close();
             return;
           }
-        } catch (err) {}
+        } catch (err) {
+          console.log(err);
+        }
         await new Promise(resolve => setTimeout(resolve, 3000));
       }
       proc.kill(2);
