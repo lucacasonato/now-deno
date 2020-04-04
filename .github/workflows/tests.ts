@@ -56,6 +56,7 @@ if (!isWin) {
         await new Promise(resolve => setTimeout(resolve, 3000));
       }
       proc.kill(2);
+      proc.close();
       throw Error('Failed to send request to now dev');
     },
   });
