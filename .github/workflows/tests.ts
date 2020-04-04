@@ -38,9 +38,11 @@ if (!isWin) {
       const proc = Deno.run({
         cmd: runNow.concat('dev', '-t', Deno.env()['NOW_TOKEN']),
         cwd: join(Deno.cwd(), 'example'),
+        stdin: 'piped',
         stdout: 'inherit',
         stderr: 'inherit',
       });
+      await new Promise(resolve => setTimeout(resolve, 20000));
       for (let i = 0; i < 20; i++) {
         try {
           const req = await fetch(`http://localhost:3000/api/version`);
