@@ -1,12 +1,12 @@
 # now-deno
 
-> ZEIT Now Deno builder - run Deno on Zeit. 🦕 + λ = ❤️
+> Now Deno builder - run Deno on `now`. 🦕 + λ = ❤️
 
-This builder allows you to run [Deno](https://deno.land) as a lambda on ZEIT Now.
+This builder allows you to run [Deno](https://deno.land) as a lambda on `now`.
 
 ## Usage
 
-If you're unfamiliar with now runtimes, please read the [runtime docs](https://zeit.co/docs/runtimes) first. This runtime can be used like any other Community Runtime.
+If you're unfamiliar with `now` runtimes, please read the [runtime docs](https://vercel.com/docs/runtimes) first. This runtime can be used like any other Community Runtime.
 
 ```json
 // now.json
@@ -19,7 +19,7 @@ If you're unfamiliar with now runtimes, please read the [runtime docs](https://z
 }
 ```
 
-Note: You need Now v17.x or above to use the above configuration.
+Note: You need `now` v17.x or above to use the above configuration.
 
 ```ts
 // api/hello.ts
