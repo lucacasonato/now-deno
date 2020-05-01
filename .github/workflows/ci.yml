@@ -11,7 +11,7 @@ jobs:
       matrix:
         os: ['ubuntu-latest']
         node: ['12.x']
-        deno: ['0.39.0']
+        deno: ['0.42.0']
       fail-fast: false
     runs-on: ${{ matrix.os }}
     name: build-${{ matrix.os }}
@@ -31,7 +31,7 @@ jobs:
       - name: Build
         run: yarn build
       - name: Update package version and tag
-        run: deno --allow-env --allow-read --allow-write .github/workflows/update-version.ts
+        run: deno --unstable --allow-env --allow-read --allow-write .github/workflows/update-version.ts
       - name: Publish to npm
         run: |
           mv .github/workflows/.npmrc .
@@ -65,8 +65,8 @@ jobs:
         run: npm i -g now
         if: matrix.os == 'windows-latest'
       - name: Update package version and tag
-        run: deno --allow-env --allow-read --allow-write .github/workflows/update-version.ts
+        run: deno --unstable --allow-env --allow-read --allow-write .github/workflows/update-version.ts
       - name: Run tests
-        run: deno test --allow-env --allow-write --allow-net --allow-run .github/workflows/tests.ts
+        run: deno test --unstable --allow-env --allow-write --allow-net --allow-run .github/workflows/tests.ts
         env:
           NOW_TOKEN: ${{ secrets.NOW_TOKEN }}

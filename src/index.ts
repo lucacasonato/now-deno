@@ -66,6 +66,8 @@ async function buildDenoLambda(
   layerFiles: Files,
   workPath: string
 ) {
+  const unstable = !!process.env.DENO_UNSTABLE;
+
   debug('building single file');
   const entrypointPath = downloadedFiles[entrypoint].fsPath;
   const entrypointDirname = path.dirname(entrypointPath);
@@ -79,7 +81,7 @@ async function buildDenoLambda(
   try {
     await execa(
       path.join(workPath, 'layer', 'bin', 'deno'),
-      ['bundle', entrypointPath, binPath].concat(debug ? ['-L=debug'] : []),
+      ['bundle', entrypointPath, binPath, ...(unstable ? ['--unstable'] : [])],
       {
         env: {
           DENO_DIR: denoDir,

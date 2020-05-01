@@ -1,17 +1,17 @@
 import {
   assert,
   assertStrContains,
-} from 'https://deno.land/std@v0.38.0/testing/asserts.ts';
-import { join } from 'https://deno.land/std@v0.38.0/path/mod.ts';
+} from 'https://deno.land/std@v0.42.0/testing/asserts.ts';
+import { join } from 'https://deno.land/std@v0.42.0/path/mod.ts';
 
-const isWin = Deno.build.os == 'win';
+const isWin = Deno.build.os == 'windows';
 const runNow = isWin ? ['now.cmd'] : ['npx', 'now'];
 
 Deno.test({
   name: 'deploy to now',
   async fn() {
     const proc = Deno.run({
-      cmd: runNow.concat('-c', '-t', Deno.env()['NOW_TOKEN']),
+      cmd: runNow.concat('-c', '-t', Deno.env.get('NOW_TOKEN')!),
       cwd: join(Deno.cwd(), 'example'),
       stdout: 'piped',
       stderr: 'piped',
@@ -36,7 +36,7 @@ if (!isWin) {
     name: 'run on now dev',
     async fn() {
       const proc = Deno.run({
-        cmd: runNow.concat('dev', '-t', Deno.env()['NOW_TOKEN']),
+        cmd: runNow.concat('dev', '-t', Deno.env.get('NOW_TOKEN')!),
         cwd: join(Deno.cwd(), 'example'),
         stdout: 'inherit',
         stderr: 'inherit',
