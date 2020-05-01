@@ -31,7 +31,7 @@ jobs:
       - name: Build
         run: yarn build
       - name: Update package version and tag
-        run: deno --unstable --allow-env --allow-read --allow-write .github/workflows/update-version.ts
+        run: deno run --unstable --allow-env --allow-read --allow-write .github/workflows/update-version.ts
       - name: Publish to npm
         run: |
           mv .github/workflows/.npmrc .
@@ -65,7 +65,7 @@ jobs:
         run: npm i -g now
         if: matrix.os == 'windows-latest'
       - name: Update package version and tag
-        run: deno --unstable --allow-env --allow-read --allow-write .github/workflows/update-version.ts
+        run: deno run --unstable --allow-env --allow-read --allow-write .github/workflows/update-version.ts
       - name: Run tests
         run: deno test --unstable --allow-env --allow-write --allow-net --allow-run .github/workflows/tests.ts
         env:
