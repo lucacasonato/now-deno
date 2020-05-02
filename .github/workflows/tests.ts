@@ -35,7 +35,7 @@ Deno.test({
   name: 'deploy to now with specific version',
   async fn() {
     const proc = Deno.run({
-      args: runNow.concat(
+      cmd: runNow.concat(
         '-t',
         Deno.env.get('NOW_TOKEN'),
         '--build-env',
