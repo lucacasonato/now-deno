@@ -23,7 +23,11 @@ Note: You need `now` v17.x or above to use the above configuration.
 
 ```ts
 // api/hello.ts
-import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'https://deno.land/x/lambda/mod.ts';
+import {
+  APIGatewayProxyEvent,
+  APIGatewayProxyResult,
+  Context,
+} from 'https://deno.land/x/lambda/mod.ts';
 
 export async function handler(
   event: APIGatewayProxyEvent,
@@ -43,7 +47,41 @@ That's the simplest way to use this runtime!
 
 ## Advanced usage
 
-You can place a `build.sh` function in the root of your deploy directory. This will be executed before the lambda is built.
+### Specific Deno version
+
+To use a specific version of Deno you can specify a environment variable in your `now.json`:
+
+```json
+// now.json
+{
+  "functions": {
+    ...
+  },
+  "env": {
+    "DENO_VERSION": "0.42.0"
+  }
+}
+```
+
+### Unstable mode
+
+To use Deno's `unstable` mode you can specify the environment variable `DENO_UNSTABLE` in your `now.json`:
+
+```json
+// now.json
+{
+  "functions": {
+    ...
+  },
+  "env": {
+    "DENO_UNSTABLE": "true"
+  }
+}
+```
+
+### Custom pre-package script
+
+You can place a `build.sh` function in the root of your deploy directory. This will be executed before the function is packaged up.
 
 ## `now dev`
 
