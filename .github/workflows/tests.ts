@@ -31,7 +31,8 @@ Deno.test({
   },
 });
 
-if (!isWin) {
+// TODO(lucacasonato): reenable test on macOS
+if (Deno.build.os === 'linux') {
   Deno.test({
     name: 'run on now dev',
     async fn() {
