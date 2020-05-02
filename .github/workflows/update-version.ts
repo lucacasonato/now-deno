@@ -1,4 +1,8 @@
-import { readJson, writeJson, ensureDir } from 'https://deno.land/std@v0.42.0/fs/mod.ts';
+import {
+  readJson,
+  writeJson,
+  ensureDir,
+} from 'https://deno.land/std@v0.42.0/fs/mod.ts';
 const sha = Deno.env.get('GITHUB_SHA');
 if (!sha) {
   throw Error('No GITHUB_SHA specified.');
@@ -18,6 +22,6 @@ now.functions['api/**/*.ts'].runtime = `${name}@${tag}`;
 await writeJson('example/now.json', now, { spaces: 2 });
 await ensureDir('example/.now');
 await writeJson('example/.now/project.json', {
-  projectId: 'QmW98fC4rGpdr75NAf3ZLHYP4epqZtsqAbo3VUmq54rLh3',
-  orgId: 'team_EE3tTVJvMBOBto96tOjNrefB',
+  projectId: 'QmT3dw3FcMmKeRh24bRCTR6iF5VCp6kB5CNjgGePK57cC6',
+  orgId: 'eTmgUytG3YzmHs86JcUzFSmc',
 });
