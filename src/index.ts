@@ -193,7 +193,7 @@ async function getDenoLambdaLayer(
     debug('unzipping `deno-lambda-layer.zip` into `layer`');
     try {
       await execa('unzip', [zipPath, '-d', layerDir], {
-        stdio: 'ignore',
+        stdio: 'pipe',
       });
     } catch (err) {
       debug('failed to unzip `deno-lambda-layer.zip` into `layer`');
