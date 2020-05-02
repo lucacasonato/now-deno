@@ -37,7 +37,7 @@ Deno.test({
     const proc = Deno.run({
       cmd: runNow.concat(
         '-t',
-        Deno.env.get('NOW_TOKEN'),
+        Deno.env.get('NOW_TOKEN')!,
         '--build-env',
         '[DENO_VERSION=0.31.0]'
       ),
