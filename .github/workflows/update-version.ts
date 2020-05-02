@@ -16,3 +16,8 @@ await writeJson('package.json', pkg, { spaces: 2 });
 const now: any = await readJson('example/now.json');
 now.functions['api/**/*.ts'].runtime = `${name}@${tag}`;
 await writeJson('example/now.json', now, { spaces: 2 });
+
+await writeJson('example/.now/project.json', {
+  projectId: 'QmW98fC4rGpdr75NAf3ZLHYP4epqZtsqAbo3VUmq54rLh3',
+  orgId: 'team_EE3tTVJvMBOBto96tOjNrefB',
+});
