@@ -1,12 +1,12 @@
 # now-deno
 
-> Now Deno builder - run Deno on `now`. 🦕 + λ = ❤️
+> Deno builder for Vercel - run Deno on `vercel`. 🦕 + λ = ❤️
 
-This builder allows you to run [Deno](https://deno.land) as a lambda on `now`.
+This builder allows you to run [Deno](https://deno.land) as a lambda on `vercel`.
 
 ## Usage
 
-If you're unfamiliar with `now` runtimes, please read the [runtime docs](https://vercel.com/docs/runtimes) first. This runtime can be used like any other Community Runtime.
+If you're unfamiliar with `vercel` runtimes, please read the [runtime docs](https://vercel.com/docs/runtimes) first. This runtime can be used like any other Community Runtime.
 
 ```json
 // now.json
@@ -19,7 +19,7 @@ If you're unfamiliar with `now` runtimes, please read the [runtime docs](https:/
 }
 ```
 
-Note: You need `now` v17.x or above to use the above configuration.
+Note: You need `vercel` v17.x or above to use the above configuration.
 
 ```ts
 // api/hello.ts
@@ -83,11 +83,11 @@ To use Deno's `unstable` mode you can specify the environment variable `DENO_UNS
 
 You can place a `build.sh` function in the root of your deploy directory. This will be executed before the function is packaged up.
 
-## `now dev`
+## `vercel dev`
 
-> **`now dev` is currently only supported on macOS and Linux. It is not supported on Windows.**
+> **`vercel dev` is currently only supported on macOS and Linux. It is not supported on Windows.**
 
-If you have have `deno` installed in your path then you can use `now dev` with this runtime. It should work just like any other runtime.
+If you have have `deno` installed in your path then you can use `vercel dev` with this runtime. It should work just like any other runtime.
 
 ## Credits
 
