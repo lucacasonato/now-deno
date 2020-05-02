@@ -11,7 +11,7 @@ Deno.test({
   name: 'deploy to now',
   async fn() {
     const proc = Deno.run({
-      cmd: runNow.concat('-c', '-t', Deno.env.get('NOW_TOKEN')!),
+      cmd: runNow.concat('-c', '-f', '-t', Deno.env.get('NOW_TOKEN')!),
       cwd: join(Deno.cwd(), 'example'),
       stdout: 'piped',
       stderr: 'piped',
@@ -37,6 +37,7 @@ Deno.test({
     const proc = Deno.run({
       cmd: runNow.concat(
         '-c',
+        '-f',
         '-t',
         Deno.env.get('NOW_TOKEN')!,
         '--build-env',
