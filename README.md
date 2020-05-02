@@ -13,7 +13,7 @@ If you're unfamiliar with `vercel` runtimes, please read the [runtime docs](http
 {
   "functions": {
     "api/**/*.{j,t}s": {
-      "runtime": "now-deno@0.3.0"
+      "runtime": "now-deno@0.4.0"
     }
   }
 }
