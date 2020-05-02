@@ -31,7 +31,7 @@ Deno.test({
   },
 });
 
-if (!isWin) {
+if (Deno.build.os == 'linux') {
   Deno.test({
     name: 'run on now dev',
     async fn() {
