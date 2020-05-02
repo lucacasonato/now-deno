@@ -39,7 +39,7 @@ Deno.test({
         '-t',
         Deno.env.get('NOW_TOKEN')!,
         '--build-env',
-        '[DENO_VERSION=0.31.0]'
+        'DENO_VERSION=0.31.0'
       ),
       cwd: join(Deno.cwd(), 'example'),
       stdout: 'piped',
