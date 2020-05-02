@@ -23,6 +23,7 @@
     "@now/build-utils": "^0.9.6",
     "@types/command-exists": "^1.2.0",
     "@types/which": "^1.3.2",
+    "acorn": "^6.4.1",
     "command-exists": "^1.2.8",
     "execa": "^1.0.0",
     "fs-extra": "^7.0.1",
