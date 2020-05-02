@@ -35,5 +35,8 @@ export async function replaceBinDeno(workPath: string) {
 export async function replaceBootstrapBash(bootstrapPath: string) {
   const bashPath = await which('bash');
   const bootstrapFile = await readFile(bootstrapPath, 'utf8');
-  await writeFile(bootstrapPath, bootstrapFile.replace('#!/bin/sh', `#!${bashPath}`))
+  await writeFile(
+    bootstrapPath,
+    bootstrapFile.replace('#!/bin/sh', `#!${bashPath}`)
+  );
 }
