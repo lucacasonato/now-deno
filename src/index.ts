@@ -102,7 +102,10 @@ async function buildDenoLambda(
         // Deno Version 0.42.0 will parse as 0.42, 1.0.0 will parse as 1
         // Quick fix for deno version. In the future a better "version check"
         // could be built. But for right now this fixes the issue.
-        ...(tsConfig && parseFloat(DENO_VERSION) >= 1 ? ['-c', tsConfig] : []),
+        ...(tsConfig &&
+        (DENO_VERSION === 'latest' || parseFloat(DENO_VERSION) >= 1)
+          ? ['-c', tsConfig]
+          : []),
       ],
       {
         env: {
