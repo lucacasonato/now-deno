@@ -142,7 +142,10 @@ async function buildDenoLambda(
           : []),
 
         // Strings
-        ...(tsConfig ? ['-c', tsConfig] : []),
+        // Deno Version 0.42.0 will parse as 0.42, 1.0.10 will parse as 1
+        // Quick fix for deno version. In the future a better "version check"
+        // could be built. But for right now this fixes the issue.
+        ...(tsConfig && parseFloat(DENO_VERSION) >= 1 ? ['-c', tsConfig] : []),
       ],
       {
         env: {
@@ -191,7 +194,7 @@ async function buildDenoLambda(
 async function walk(dir: string): Promise<string[]> {
   const f = await fs.readdir(dir);
   const files = await Promise.all(
-    f.map(async (file) => {
+    f.map(async file => {
       const filePath = path.join(dir, file);
       const stats = await fs.stat(filePath);
       if (stats.isDirectory()) return walk(filePath);
@@ -208,7 +211,7 @@ async function getDenoDirFiles(denoDirPath: string): Promise<Files> {
 
   const dir = await walk(denoDirPath);
 
-  dir.forEach((file) => {
+  dir.forEach(file => {
     const f = path.join('.deno_dir', file.replace(denoDirPath + '/', ''));
     files[f] = new FileFsRef({ fsPath: file, mode: 0o755 });
   });
@@ -298,7 +301,7 @@ async function gatherExtraFiles(
 
   if (Array.isArray(globMatcher)) {
     const allMatches = await Promise.all(
-      globMatcher.map((pattern) => glob(pattern, entryDir))
+      globMatcher.map(pattern => glob(pattern, entryDir))
     );
 
     return allMatches.reduce((acc, matches) => ({ ...acc, ...matches }), {});
