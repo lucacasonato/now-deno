@@ -20,13 +20,14 @@ import {
 } from './dev';
 import { getWorkPath } from './util';
 
-const DENO_LATEST = 'latest'
+const DENO_LATEST = 'latest';
 const DENO_VERSION = process.env.DENO_VERSION || DENO_LATEST;
-const DOWNLOAD_URL = DENO_VERSION === DENO_LATEST ?
-      `https://github.com/hayd/deno-lambda/releases/latest/download/deno-lambda-layer.zip` :
-      `https://github.com/hayd/deno-lambda/releases/download/${DENO_VERSION}/deno-lambda-layer.zip`;
+const DOWNLOAD_URL =
+  DENO_VERSION === DENO_LATEST
+    ? `https://github.com/hayd/deno-lambda/releases/latest/download/deno-lambda-layer.zip`
+    : `https://github.com/hayd/deno-lambda/releases/download/${DENO_VERSION}/deno-lambda-layer.zip`;
 
-debug('Deno Version:', DENO_VERSION)
+debug('Deno Version:', DENO_VERSION);
 
 export const version = 3;
 
@@ -74,7 +75,29 @@ async function buildDenoLambda(
   layerFiles: Files,
   workPath: string
 ) {
+  // Booleans
   const unstable = !!process.env.DENO_UNSTABLE;
+  const allowRun = !!process.env.DENO_ALLOW_RUN;
+  const allowAll = !!process.env.DENO_ALLOW_ALL;
+  const allowEnv = !!process.env.DENO_ALLOW_ENV;
+  const allowHrTime = !!process.env.DENO_ALLOW_HR_TIME;
+
+  // Booleans or Whitelist (string)
+  const allowRead =
+    `${!!process.env.DENO_ALLOW_READ}` === process.env.DENO_ALLOW_READ
+      ? !!process.env.DENO_ALLOW_READ
+      : `${process.env.DENO_ALLOW_READ}`;
+  const allowWrite =
+    `${!!process.env.DENO_ALLOW_WRITE}` === process.env.DENO_ALLOW_WRITE
+      ? !!process.env.DENO_ALLOW_WRITE
+      : `${process.env.DENO_ALLOW_WRITE}`;
+  const allowNet =
+    `${!!process.env.DENO_ALLOW_NET}` === process.env.DENO_ALLOW_NET
+      ? !!process.env.DENO_ALLOW_NET
+      : `${process.env.DENO_ALLOW_NET}`;
+
+  // Path (string)
+  const tsConfig = process.env.DENO_CONFIG;
 
   debug('building single file');
   const entrypointPath = downloadedFiles[entrypoint].fsPath;
@@ -89,7 +112,38 @@ async function buildDenoLambda(
   try {
     await execa(
       path.join(workPath, 'layer', 'bin', 'deno'),
-      ['bundle', entrypointPath, binPath, ...(unstable ? ['--unstable'] : [])],
+      [
+        'bundle',
+        entrypointPath,
+        binPath,
+        // Boolean
+        ...(unstable ? ['--unstable'] : []),
+        ...(allowAll ? ['-A'] : []),
+        ...(allowEnv ? ['--allow-env'] : []),
+        ...(allowRun ? ['--allow-run'] : []),
+        ...(allowHrTime ? ['--allow-hrtime'] : []),
+
+        // Boolean or Strings (only one of each pair will be applied)
+        ...(allowRead && typeof allowRead === 'boolean'
+          ? ['--allow-read']
+          : []),
+        ...(allowRead && typeof allowRead === 'string'
+          ? [`--allow-read=${allowRead}`]
+          : []),
+        ...(allowWrite && typeof allowWrite === 'boolean'
+          ? ['--allow-write']
+          : []),
+        ...(allowWrite && typeof allowWrite === 'string'
+          ? [`--allow-write=${allowWrite}`]
+          : []),
+        ...(allowNet && typeof allowNet === 'boolean' ? ['--allow-net'] : []),
+        ...(allowNet && typeof allowNet === 'string'
+          ? [`--allow-net=${allowNet}`]
+          : []),
+
+        // Strings
+        ...(tsConfig ? ['-c', tsConfig] : []),
+      ],
       {
         env: {
           DENO_DIR: denoDir,
@@ -137,7 +191,7 @@ async function buildDenoLambda(
 async function walk(dir: string): Promise<string[]> {
   const f = await fs.readdir(dir);
   const files = await Promise.all(
-    f.map(async file => {
+    f.map(async (file) => {
       const filePath = path.join(dir, file);
       const stats = await fs.stat(filePath);
       if (stats.isDirectory()) return walk(filePath);
@@ -154,7 +208,7 @@ async function getDenoDirFiles(denoDirPath: string): Promise<Files> {
 
   const dir = await walk(denoDirPath);
 
-  dir.forEach(file => {
+  dir.forEach((file) => {
     const f = path.join('.deno_dir', file.replace(denoDirPath + '/', ''));
     files[f] = new FileFsRef({ fsPath: file, mode: 0o755 });
   });
@@ -170,18 +224,9 @@ async function getDenoLambdaLayer(
   if (!(await pathExists(zipPath))) {
     debug('downloading ', DOWNLOAD_URL);
     try {
-      await execa(
-        'curl',
-        [
-          '-o',
-          zipPath,
-          '-L',
-          DOWNLOAD_URL,
-        ],
-        {
-          stdio: 'pipe',
-        }
-      );
+      await execa('curl', ['-o', zipPath, '-L', DOWNLOAD_URL], {
+        stdio: 'pipe',
+      });
     } catch (err) {
       debug('failed to download deno-lambda-layer');
       throw new Error(
@@ -253,7 +298,7 @@ async function gatherExtraFiles(
 
   if (Array.isArray(globMatcher)) {
     const allMatches = await Promise.all(
-      globMatcher.map(pattern => glob(pattern, entryDir))
+      globMatcher.map((pattern) => glob(pattern, entryDir))
     );
 
     return allMatches.reduce((acc, matches) => ({ ...acc, ...matches }), {});
