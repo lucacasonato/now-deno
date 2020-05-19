@@ -77,26 +77,6 @@ async function buildDenoLambda(
 ) {
   // Booleans
   const unstable = !!process.env.DENO_UNSTABLE;
-  const allowRun = !!process.env.DENO_ALLOW_RUN;
-  const allowAll = !!process.env.DENO_ALLOW_ALL;
-  const allowEnv = !!process.env.DENO_ALLOW_ENV;
-  const allowHrTime = !!process.env.DENO_ALLOW_HR_TIME;
-
-  // Booleans or Whitelist (string)
-  const allowRead =
-    `${!!process.env.DENO_ALLOW_READ}` === process.env.DENO_ALLOW_READ
-      ? !!process.env.DENO_ALLOW_READ
-      : `${process.env.DENO_ALLOW_READ}`;
-  const allowWrite =
-    `${!!process.env.DENO_ALLOW_WRITE}` === process.env.DENO_ALLOW_WRITE
-      ? !!process.env.DENO_ALLOW_WRITE
-      : `${process.env.DENO_ALLOW_WRITE}`;
-  const allowNet =
-    `${!!process.env.DENO_ALLOW_NET}` === process.env.DENO_ALLOW_NET
-      ? !!process.env.DENO_ALLOW_NET
-      : `${process.env.DENO_ALLOW_NET}`;
-
-  // Path (string)
   const tsConfig = process.env.DENO_CONFIG;
 
   debug('building single file');
@@ -118,31 +98,8 @@ async function buildDenoLambda(
         binPath,
         // Boolean
         ...(unstable ? ['--unstable'] : []),
-        ...(allowAll ? ['-A'] : []),
-        ...(allowEnv ? ['--allow-env'] : []),
-        ...(allowRun ? ['--allow-run'] : []),
-        ...(allowHrTime ? ['--allow-hrtime'] : []),
-
-        // Boolean or Strings (only one of each pair will be applied)
-        ...(allowRead && typeof allowRead === 'boolean'
-          ? ['--allow-read']
-          : []),
-        ...(allowRead && typeof allowRead === 'string'
-          ? [`--allow-read=${allowRead}`]
-          : []),
-        ...(allowWrite && typeof allowWrite === 'boolean'
-          ? ['--allow-write']
-          : []),
-        ...(allowWrite && typeof allowWrite === 'string'
-          ? [`--allow-write=${allowWrite}`]
-          : []),
-        ...(allowNet && typeof allowNet === 'boolean' ? ['--allow-net'] : []),
-        ...(allowNet && typeof allowNet === 'string'
-          ? [`--allow-net=${allowNet}`]
-          : []),
-
         // Strings
-        // Deno Version 0.42.0 will parse as 0.42, 1.0.10 will parse as 1
+        // Deno Version 0.42.0 will parse as 0.42, 1.0.0 will parse as 1
         // Quick fix for deno version. In the future a better "version check"
         // could be built. But for right now this fixes the issue.
         ...(tsConfig && parseFloat(DENO_VERSION) >= 1 ? ['-c', tsConfig] : []),
