@@ -67,6 +67,6 @@ jobs:
       - name: Update package version and tag
         run: deno run --unstable --allow-env --allow-read --allow-write .github/workflows/update-version.ts
       - name: Run tests
-        run: deno test --unstable --allow-env --allow-write --allow-net --allow-run .github/workflows/tests.ts
+        run: deno test --unstable --allow-env --allow-read --allow-write --allow-net --allow-run .github/workflows/tests.ts
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
