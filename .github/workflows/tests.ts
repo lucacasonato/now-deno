@@ -1,17 +1,17 @@
 import {
   assert,
   assertStrContains,
-} from 'https://deno.land/std@v0.42.0/testing/asserts.ts';
-import { join } from 'https://deno.land/std@v0.42.0/path/mod.ts';
+} from 'https://deno.land/std@0.51.0/testing/asserts.ts';
+import { join } from 'https://deno.land/std@0.51.0/path/mod.ts';
 
 const isWin = Deno.build.os == 'windows';
-const runNow = isWin ? ['now.cmd'] : ['npx', 'now'];
+const runNow = isWin ? ['vercel.cmd'] : ['npx', 'vercel'];
 
 Deno.test({
-  name: 'deploy to now',
+  name: 'deploy to vercel',
   async fn() {
     const proc = Deno.run({
-      cmd: runNow.concat('-c', '-f', '-t', Deno.env.get('NOW_TOKEN')!),
+      cmd: runNow.concat('-c', '-f', '-t', Deno.env.get('VERCEL_TOKEN')!),
       cwd: join(Deno.cwd(), 'example'),
       stdout: 'piped',
       stderr: 'piped',
@@ -32,14 +32,14 @@ Deno.test({
 });
 
 Deno.test({
-  name: 'deploy to now with specific version',
+  name: 'deploy to vercel with specific version',
   async fn() {
     const proc = Deno.run({
       cmd: runNow.concat(
         '-c',
         '-f',
         '-t',
-        Deno.env.get('NOW_TOKEN')!,
+        Deno.env.get('VERCEL_TOKEN')!,
         '--build-env',
         'DENO_VERSION=0.40.0'
       ),
@@ -66,10 +66,10 @@ Deno.test({
 // TODO(lucacasonato): reenable test on macOS
 if (Deno.build.os === 'linux') {
   Deno.test({
-    name: 'run on now dev',
+    name: 'run on vercel dev',
     async fn() {
       const proc = Deno.run({
-        cmd: runNow.concat('dev', '-t', Deno.env.get('NOW_TOKEN')!),
+        cmd: runNow.concat('dev', '-t', Deno.env.get('VERCEL_TOKEN')!),
         cwd: join(Deno.cwd(), 'example'),
         stdout: 'inherit',
         stderr: 'inherit',
@@ -93,7 +93,7 @@ if (Deno.build.os === 'linux') {
       }
       proc.kill(2);
       proc.close();
-      throw Error('Failed to send request to now dev');
+      throw Error('Failed to send request to vercel dev');
     },
   });
 }

@@ -11,7 +11,7 @@ import {
   DownloadedFiles,
   Files,
   debug,
-} from '@now/build-utils';
+} from '@vercel/build-utils';
 import {
   ensureDeno,
   replaceBinDeno,
@@ -20,13 +20,14 @@ import {
 } from './dev';
 import { getWorkPath } from './util';
 
-const DENO_LATEST = 'latest'
+const DENO_LATEST = 'latest';
 const DENO_VERSION = process.env.DENO_VERSION || DENO_LATEST;
-const DOWNLOAD_URL = DENO_VERSION === DENO_LATEST ?
-      `https://github.com/hayd/deno-lambda/releases/latest/download/deno-lambda-layer.zip` :
-      `https://github.com/hayd/deno-lambda/releases/download/${DENO_VERSION}/deno-lambda-layer.zip`;
+const DOWNLOAD_URL =
+  DENO_VERSION === DENO_LATEST
+    ? `https://github.com/hayd/deno-lambda/releases/latest/download/deno-lambda-layer.zip`
+    : `https://github.com/hayd/deno-lambda/releases/download/${DENO_VERSION}/deno-lambda-layer.zip`;
 
-debug('Deno Version:', DENO_VERSION)
+debug('Deno Version:', DENO_VERSION);
 
 export const version = 3;
 
@@ -78,6 +79,7 @@ async function buildDenoLambda(
 
   debug('building single file');
   const entrypointPath = downloadedFiles[entrypoint].fsPath;
+  console.log(entrypointPath);
   const entrypointDirname = path.dirname(entrypointPath);
 
   const extname = path.extname(entrypointPath);
@@ -170,18 +172,9 @@ async function getDenoLambdaLayer(
   if (!(await pathExists(zipPath))) {
     debug('downloading ', DOWNLOAD_URL);
     try {
-      await execa(
-        'curl',
-        [
-          '-o',
-          zipPath,
-          '-L',
-          DOWNLOAD_URL,
-        ],
-        {
-          stdio: 'pipe',
-        }
-      );
+      await execa('curl', ['-o', zipPath, '-L', DOWNLOAD_URL], {
+        stdio: 'pipe',
+      });
     } catch (err) {
       debug('failed to download deno-lambda-layer');
       throw new Error(
