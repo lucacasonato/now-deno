@@ -76,6 +76,7 @@ async function buildDenoLambda(
   workPath: string
 ) {
   const unstable = !!process.env.DENO_UNSTABLE;
+  console.log(unstable);
 
   debug('building single file');
   const entrypointPath = downloadedFiles[entrypoint].fsPath;
