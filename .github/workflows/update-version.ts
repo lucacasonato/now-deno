@@ -2,7 +2,7 @@ import {
   readJson,
   writeJson,
   ensureDir,
-} from 'https://deno.land/std@v0.42.0/fs/mod.ts';
+} from 'https://deno.land/std@0.51.0/fs/mod.ts';
 const sha = Deno.env.get('GITHUB_SHA');
 if (!sha) {
   throw Error('No GITHUB_SHA specified.');
