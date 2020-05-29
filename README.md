@@ -79,6 +79,22 @@ To use Deno's `unstable` mode you can specify the environment variable `DENO_UNS
 }
 ```
 
+### TS Config
+
+To pass a custom config, you can specify the variable `DENO_CONFIG` in your `now.json`:
+
+```json
+// now.json
+{
+  "functions": {
+    ...
+  },
+  "env": {
+    "DENO_CONFIG": "tsconfig.json"
+  }
+}
+```
+
 ### Custom pre-package script
 
 You can place a `build.sh` function in the root of your deploy directory. This will be executed before the function is packaged up.

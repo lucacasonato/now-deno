@@ -20,13 +20,14 @@ import {
 } from './dev';
 import { getWorkPath } from './util';
 
-const DENO_LATEST = 'latest'
+const DENO_LATEST = 'latest';
 const DENO_VERSION = process.env.DENO_VERSION || DENO_LATEST;
-const DOWNLOAD_URL = DENO_VERSION === DENO_LATEST ?
-      `https://github.com/hayd/deno-lambda/releases/latest/download/deno-lambda-layer.zip` :
-      `https://github.com/hayd/deno-lambda/releases/download/${DENO_VERSION}/deno-lambda-layer.zip`;
+const DOWNLOAD_URL =
+  DENO_VERSION === DENO_LATEST
+    ? `https://github.com/hayd/deno-lambda/releases/latest/download/deno-lambda-layer.zip`
+    : `https://github.com/hayd/deno-lambda/releases/download/${DENO_VERSION}/deno-lambda-layer.zip`;
 
-debug('Deno Version:', DENO_VERSION)
+debug('Deno Version:', DENO_VERSION);
 
 export const version = 3;
 
@@ -74,7 +75,9 @@ async function buildDenoLambda(
   layerFiles: Files,
   workPath: string
 ) {
+  // Booleans
   const unstable = !!process.env.DENO_UNSTABLE;
+  const tsConfig = process.env.DENO_CONFIG;
 
   debug('building single file');
   const entrypointPath = downloadedFiles[entrypoint].fsPath;
@@ -89,7 +92,21 @@ async function buildDenoLambda(
   try {
     await execa(
       path.join(workPath, 'layer', 'bin', 'deno'),
-      ['bundle', entrypointPath, binPath, ...(unstable ? ['--unstable'] : [])],
+      [
+        'bundle',
+        entrypointPath,
+        binPath,
+        // Boolean
+        ...(unstable ? ['--unstable'] : []),
+        // Strings
+        // Deno Version 0.42.0 will parse as 0.42, 1.0.0 will parse as 1
+        // Quick fix for deno version. In the future a better "version check"
+        // could be built. But for right now this fixes the issue.
+        ...(tsConfig &&
+        (DENO_VERSION === 'latest' || parseFloat(DENO_VERSION) >= 1)
+          ? ['-c', tsConfig]
+          : []),
+      ],
       {
         env: {
           DENO_DIR: denoDir,
@@ -170,18 +187,9 @@ async function getDenoLambdaLayer(
   if (!(await pathExists(zipPath))) {
     debug('downloading ', DOWNLOAD_URL);
     try {
-      await execa(
-        'curl',
-        [
-          '-o',
-          zipPath,
-          '-L',
-          DOWNLOAD_URL,
-        ],
-        {
-          stdio: 'pipe',
-        }
-      );
+      await execa('curl', ['-o', zipPath, '-L', DOWNLOAD_URL], {
+        stdio: 'pipe',
+      });
     } catch (err) {
       debug('failed to download deno-lambda-layer');
       throw new Error(
