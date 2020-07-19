@@ -11,7 +11,7 @@ import {
   DownloadedFiles,
   Files,
   debug,
-} from '@now/build-utils';
+} from '@vercel/build-utils';
 import {
   ensureDeno,
   replaceBinDeno,
@@ -21,7 +21,7 @@ import {
 import { getWorkPath } from './util';
 
 const DENO_LATEST = 'latest';
-const DENO_VERSION = process.env.DENO_VERSION || DENO_LATEST;
+const DENO_VERSION = process.env.DENO_VERSION ?? DENO_LATEST;
 const DOWNLOAD_URL =
   DENO_VERSION === DENO_LATEST
     ? `https://github.com/hayd/deno-lambda/releases/latest/download/deno-lambda-layer.zip`

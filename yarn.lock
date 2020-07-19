@@ -345,11 +345,6 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@now/build-utils@^0.9.6":
-  version "0.9.14"
-  resolved "https://registry.yarnpkg.com/@now/build-utils/-/build-utils-0.9.14.tgz#9e81828d3a2be697db0d8c44cbe9ae519003ee6f"
-  integrity sha512-fDyo/1Zb2StDhFKfoNf+M9nY5RhfuofpGXVwL8IjYUodze1VPDFX039Ut8zUVlujIFkSl8QMl8iu9fYr0H2ERg==
-
 "@types/babel__core@^7.1.0":
   version "7.1.7"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.7.tgz#1dacad8840364a57c98d0dd4855c6dd3752c6b89"
@@ -448,6 +443,11 @@
   integrity sha512-XAvHLwG7UQ+8M4caKIH0ZozIOYay5fQkAgyIXegXT9jPtdIGdhga+sUEdAr1CiG46aB+c64xQEYyEzlwWVTNzA==
   dependencies:
     "@types/yargs-parser" "*"
+
+"@vercel/build-utils@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@vercel/build-utils/-/build-utils-2.4.0.tgz#c756a3804f072cc693ebe0bbcc1adcce61b9f15c"
+  integrity sha512-VRXMLBPDcpFUHQMgHdgYHBl9SRwqNFb43tgkMdTYaNml2HgqlLNvNuINKlqwB2/Q/tARIWcm4jmPKR0gu1CaEQ==
 
 abab@^2.0.0:
   version "2.0.3"
@@ -2334,11 +2334,6 @@ normalize-path@^2.1.1:
   dependencies:
     remove-trailing-separator "^1.0.1"
 
-now@^18.0.0:
-  version "18.0.0"
-  resolved "https://registry.yarnpkg.com/now/-/now-18.0.0.tgz#e6689205346e354f822b1f5feb2c0d7d570c172f"
-  integrity sha512-MVskFV3xH1hMkpTewPCb3p0SQ17hL7EI1Zb+Ij2wYiRV3X0a6G91GdE2vvFlhsK6rhRHKHZnDQkZ0AnkpnfzHA==
-
 npm-run-path@^2.0.0:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/npm-run-path/-/npm-run-path-2.0.2.tgz#35a9232dfa35d7067b4cb2ddf2357b1871536c5f"
@@ -3154,10 +3149,10 @@ type-check@~0.3.2:
   dependencies:
     prelude-ls "~1.1.2"
 
-typescript@3.5.2:
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.5.2.tgz#a09e1dc69bc9551cadf17dba10ee42cf55e5d56c"
-  integrity sha512-7KxJovlYhTX5RaRbUdkAXN1KUZ8PwWlTzQdHV6xNqvuFOs7+WBo10TQUqT19Q/Jz2hk5v9TQDIhyLhhJY4p5AA==
+typescript@^3.9.5:
+  version "3.9.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.5.tgz#586f0dba300cde8be52dd1ac4f7e1009c1b13f36"
+  integrity sha512-hSAifV3k+i6lEoCJ2k6R2Z/rp/H3+8sdmcn5NrS3/3kE7+RyZXm9aqvxWqjEXHAd8b0pShatpcdMTvEdvAJltQ==
 
 union-value@^1.0.0:
   version "1.0.1"

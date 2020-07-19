@@ -17,11 +17,11 @@ pkg.name = name;
 pkg.version = tag;
 await writeJson('package.json', pkg, { spaces: 2 });
 
-const now: any = await readJson('example/now.json');
-now.functions['api/**/*.ts'].runtime = `${name}@${tag}`;
-await writeJson('example/now.json', now, { spaces: 2 });
-await ensureDir('example/.now');
-await writeJson('example/.now/project.json', {
+const vercel: any = await readJson('example/vercel.json');
+vercel.functions['api/**/*.ts'].runtime = `${name}@${tag}`;
+await writeJson('example/vercel.json', vercel, { spaces: 2 });
+await ensureDir('example/.vercel');
+await writeJson('example/.vercel/project.json', {
   projectId: 'QmT3dw3FcMmKeRh24bRCTR6iF5VCp6kB5CNjgGePK57cC6',
   orgId: 'eTmgUytG3YzmHs86JcUzFSmc',
 });

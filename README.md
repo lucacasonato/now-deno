@@ -9,7 +9,7 @@ This builder allows you to run [Deno](https://deno.land) as a lambda on `vercel`
 If you're unfamiliar with `vercel` runtimes, please read the [runtime docs](https://vercel.com/docs/runtimes) first. This runtime can be used like any other Community Runtime.
 
 ```json
-// now.json
+// vercel.json
 {
   "functions": {
     "api/**/*.{j,t}s": {
@@ -49,26 +49,26 @@ That's the simplest way to use this runtime!
 
 ### Specific Deno version
 
-To use a specific version of Deno you can specify a environment variable in your `now.json`:
+To use a specific version of Deno you can specify a environment variable in your `vercel.json`:
 
 ```json
-// now.json
+// vercel.json
 {
   "functions": {
     ...
   },
   "env": {
-    "DENO_VERSION": "0.42.0"
+    "DENO_VERSION": "1.1.0"
   }
 }
 ```
 
 ### Unstable mode
 
-To use Deno's `unstable` mode you can specify the environment variable `DENO_UNSTABLE` in your `now.json`:
+To use Deno's `unstable` mode you can specify the environment variable `DENO_UNSTABLE` in your `vercel.json`:
 
 ```json
-// now.json
+// vercel.json
 {
   "functions": {
     ...
@@ -81,10 +81,10 @@ To use Deno's `unstable` mode you can specify the environment variable `DENO_UNS
 
 ### TS Config
 
-To pass a custom config, you can specify the variable `DENO_CONFIG` in your `now.json`:
+To pass a custom config, you can specify the variable `DENO_CONFIG` in your `vercel.json`:
 
 ```json
-// now.json
+// vercel.json
 {
   "functions": {
     ...
