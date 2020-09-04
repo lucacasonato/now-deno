@@ -1,6 +1,6 @@
 import {
   assert,
-  assertStrContains,
+  assertStringContains
 } from 'https://deno.land/std@0.68.0/testing/asserts.ts';
 import { join } from 'https://deno.land/std@0.68.0/path/mod.ts';
 
@@ -26,8 +26,8 @@ Deno.test({
     const req = await fetch(`${url}/api/version`);
     assert(req.ok);
     const text = await req.text();
-    assertStrContains(text, 'Welcome to deno');
-    assertStrContains(text, '🦕');
+    assertStringContains(text, 'Welcome to deno');
+    assertStringContains(text, '🦕');
   },
 });
 
@@ -57,9 +57,9 @@ Deno.test({
     const req = await fetch(`${url}/api/version`);
     assert(req.ok);
     const text = await req.text();
-    assertStrContains(text, 'Welcome to deno');
-    assertStrContains(text, '0.40.0');
-    assertStrContains(text, '🦕');
+    assertStringContains(text, 'Welcome to deno');
+    assertStringContains(text, '0.40.0');
+    assertStringContains(text, '🦕');
   },
 });
 
@@ -80,8 +80,8 @@ if (Deno.build.os === 'linux') {
           const req = await fetch(`http://localhost:3000/api/version`);
           if (req.ok) {
             const text = await req.text();
-            assertStrContains(text, 'Welcome to deno');
-            assertStrContains(text, '🦕');
+            assertStringContains(text, 'Welcome to deno');
+            assertStringContains(text, '🦕');
             proc.kill(2);
             proc.close();
             Deno.exit(0);
