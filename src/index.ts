@@ -75,8 +75,9 @@ async function buildDenoLambda(
   layerFiles: Files,
   workPath: string
 ) {
+  // Booleans
   const unstable = !!process.env.DENO_UNSTABLE;
-  console.log(unstable);
+  const tsConfig = process.env.DENO_CONFIG;
 
   debug('building single file');
   const entrypointPath = downloadedFiles[entrypoint].fsPath;
@@ -92,7 +93,21 @@ async function buildDenoLambda(
   try {
     await execa(
       path.join(workPath, 'layer', 'bin', 'deno'),
-      ['bundle', entrypointPath, binPath, ...(unstable ? ['--unstable'] : [])],
+      [
+        'bundle',
+        entrypointPath,
+        binPath,
+        // Boolean
+        ...(unstable ? ['--unstable'] : []),
+        // Strings
+        // Deno Version 0.42.0 will parse as 0.42, 1.0.0 will parse as 1
+        // Quick fix for deno version. In the future a better "version check"
+        // could be built. But for right now this fixes the issue.
+        ...(tsConfig &&
+        (DENO_VERSION === 'latest' || parseFloat(DENO_VERSION) >= 1)
+          ? ['-c', tsConfig]
+          : []),
+      ],
       {
         env: {
           DENO_DIR: denoDir,
