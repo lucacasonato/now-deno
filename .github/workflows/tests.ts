@@ -1,17 +1,17 @@
 import {
   assert,
-  assertStrContains,
-} from 'https://deno.land/std@v0.42.0/testing/asserts.ts';
-import { join } from 'https://deno.land/std@v0.42.0/path/mod.ts';
+  assertStringContains
+} from 'https://deno.land/std@0.68.0/testing/asserts.ts';
+import { join } from 'https://deno.land/std@0.68.0/path/mod.ts';
 
 const isWin = Deno.build.os == 'windows';
-const runNow = isWin ? ['now.cmd'] : ['npx', 'now'];
+const runNow = isWin ? ['vercel.cmd'] : ['npx', 'vercel'];
 
 Deno.test({
-  name: 'deploy to now',
+  name: 'deploy to vercel',
   async fn() {
     const proc = Deno.run({
-      cmd: runNow.concat('-c', '-f', '-t', Deno.env.get('NOW_TOKEN')!),
+      cmd: runNow.concat('-c', '-f', '-t', Deno.env.get('VERCEL_TOKEN')!),
       cwd: join(Deno.cwd(), 'example'),
       stdout: 'piped',
       stderr: 'piped',
@@ -26,20 +26,20 @@ Deno.test({
     const req = await fetch(`${url}/api/version`);
     assert(req.ok);
     const text = await req.text();
-    assertStrContains(text, 'Welcome to deno');
-    assertStrContains(text, '🦕');
+    assertStringContains(text, 'Welcome to deno');
+    assertStringContains(text, '🦕');
   },
 });
 
 Deno.test({
-  name: 'deploy to now with specific version',
+  name: 'deploy to vercel with specific version',
   async fn() {
     const proc = Deno.run({
       cmd: runNow.concat(
         '-c',
         '-f',
         '-t',
-        Deno.env.get('NOW_TOKEN')!,
+        Deno.env.get('VERCEL_TOKEN')!,
         '--build-env',
         'DENO_VERSION=0.40.0'
       ),
@@ -57,19 +57,19 @@ Deno.test({
     const req = await fetch(`${url}/api/version`);
     assert(req.ok);
     const text = await req.text();
-    assertStrContains(text, 'Welcome to deno');
-    assertStrContains(text, '0.40.0');
-    assertStrContains(text, '🦕');
+    assertStringContains(text, 'Welcome to deno');
+    assertStringContains(text, '0.40.0');
+    assertStringContains(text, '🦕');
   },
 });
 
 // TODO(lucacasonato): reenable test on macOS
 if (Deno.build.os === 'linux') {
   Deno.test({
-    name: 'run on now dev',
+    name: 'run on vercel dev',
     async fn() {
       const proc = Deno.run({
-        cmd: runNow.concat('dev', '-t', Deno.env.get('NOW_TOKEN')!),
+        cmd: runNow.concat('dev', '-t', Deno.env.get('VERCEL_TOKEN')!),
         cwd: join(Deno.cwd(), 'example'),
         stdout: 'inherit',
         stderr: 'inherit',
@@ -80,8 +80,8 @@ if (Deno.build.os === 'linux') {
           const req = await fetch(`http://localhost:3000/api/version`);
           if (req.ok) {
             const text = await req.text();
-            assertStrContains(text, 'Welcome to deno');
-            assertStrContains(text, '🦕');
+            assertStringContains(text, 'Welcome to deno');
+            assertStringContains(text, '🦕');
             proc.kill(2);
             proc.close();
             Deno.exit(0);
@@ -93,7 +93,7 @@ if (Deno.build.os === 'linux') {
       }
       proc.kill(2);
       proc.close();
-      throw Error('Failed to send request to now dev');
+      throw Error('Failed to send request to vercel dev');
     },
   });
 }

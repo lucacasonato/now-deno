@@ -10,8 +10,8 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest']
-        node: ['12.x']
-        deno: ['0.42.0']
+        node: ['14.x']
+        deno: ['1.3.2']
       fail-fast: false
     runs-on: ${{ matrix.os }}
     name: build-${{ matrix.os }}
@@ -43,8 +43,8 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
-        node: ['12.x']
-        deno: ['0.42.0']
+        node: ['14.x']
+        deno: ['1.3.2']
       fail-fast: false
     runs-on: ${{ matrix.os }}
     name: test-${{ matrix.os }}
@@ -61,12 +61,12 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
         run: yarn install
-      - name: Install now
-        run: npm i -g now
+      - name: Install vercel
+        run: npm i -g vercel
         if: matrix.os == 'windows-latest'
       - name: Update package version and tag
         run: deno run --unstable --allow-env --allow-read --allow-write .github/workflows/update-version.ts
       - name: Run tests
-        run: deno test --unstable --allow-env --allow-write --allow-net --allow-run .github/workflows/tests.ts
+        run: deno test --unstable --allow-env --allow-read --allow-write --allow-net --allow-run .github/workflows/tests.ts
         env:
-          NOW_TOKEN: ${{ secrets.NOW_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}

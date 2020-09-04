@@ -11,7 +11,7 @@ import {
   DownloadedFiles,
   Files,
   debug,
-} from '@now/build-utils';
+} from '@vercel/build-utils';
 import {
   ensureDeno,
   replaceBinDeno,
@@ -81,6 +81,7 @@ async function buildDenoLambda(
 
   debug('building single file');
   const entrypointPath = downloadedFiles[entrypoint].fsPath;
+  console.log(entrypointPath);
   const entrypointDirname = path.dirname(entrypointPath);
 
   const extname = path.extname(entrypointPath);
