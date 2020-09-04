@@ -1,8 +1,8 @@
 import {
   assert,
   assertStrContains,
-} from 'https://deno.land/std@0.51.0/testing/asserts.ts';
-import { join } from 'https://deno.land/std@0.51.0/path/mod.ts';
+} from 'https://deno.land/std@0.68.0/testing/asserts.ts';
+import { join } from 'https://deno.land/std@0.68.0/path/mod.ts';
 
 const isWin = Deno.build.os == 'windows';
 const runNow = isWin ? ['vercel.cmd'] : ['npx', 'vercel'];
